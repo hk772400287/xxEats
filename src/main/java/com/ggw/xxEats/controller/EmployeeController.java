@@ -6,6 +6,7 @@ import com.ggw.xxEats.common.R;
 import com.ggw.xxEats.entity.Employee;
 import com.ggw.xxEats.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
@@ -51,17 +52,32 @@ public class EmployeeController {
     @PostMapping
     public R<String> save(@RequestBody Employee employee, HttpServletRequest request) {
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-        Long creatorId = (Long)request.getSession().getAttribute("employee");
-        employee.setCreateUser(creatorId);
-        employee.setUpdateUser(creatorId);
         employeeService.save(employee);
         return R.success("Added new employee successfully");
     }
 
     @GetMapping("/page")
     public R<Page> page(int page, int pageSize, String name) {
-        return null;
+        Page pageInfo = new Page(page, pageSize);
+        LambdaQueryWrapper<Employee> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.like(StringUtils.isNotEmpty(name), Employee::getName, name);
+        lambdaQueryWrapper.orderByDesc(Employee::getUpdateTime);
+        employeeService.page(pageInfo, lambdaQueryWrapper);
+        return R.success(pageInfo);
+    }
+
+    @PutMapping
+    public R<String> update(@RequestBody Employee employee, HttpServletRequest request) {
+        employeeService.updateById(employee);
+        return R.success("Updated successfully");
+    }
+
+    @GetMapping("/{id}")
+    public R<Employee> getById(@PathVariable String id) {
+        Employee employee = employeeService.getById(id);
+        if (employee != null) {
+            return R.success(employee);
+        }
+        return R.error("No employee information");
     }
 }

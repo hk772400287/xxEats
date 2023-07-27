@@ -1,6 +1,7 @@
 package com.ggw.xxEats.filter;
 
 import com.alibaba.fastjson.JSON;
+import com.ggw.xxEats.common.BaseContext;
 import com.ggw.xxEats.common.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
@@ -30,6 +31,7 @@ public class LoginCheckFilter implements Filter {
         }
         if (request.getSession().getAttribute("employee") != null) {
             log.info("Already logged in, userID is {}", request.getSession().getAttribute("employee"));
+            BaseContext.setCurrentId((Long) request.getSession().getAttribute("employee"));
             filterChain.doFilter(request, response);
             return;
         }
