@@ -4,11 +4,14 @@ package com.ggw.xxEats.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ggw.xxEats.common.R;
+import com.ggw.xxEats.dto.DishDto;
 import com.ggw.xxEats.entity.Category;
 import com.ggw.xxEats.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -45,6 +48,16 @@ public class CategoryController {
         categoryService.updateById(category);
         return R.success("Updated successfully");
     }
+
+    @GetMapping("/list")
+    public R<List<Category>> list(Category category) {
+        LambdaQueryWrapper<Category> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(category.getType() != null, Category::getType, category.getType());
+        lambdaQueryWrapper.orderByAsc(Category::getSort).orderByDesc(Category::getUpdateTime);
+        List<Category> categoryList = categoryService.list(lambdaQueryWrapper);
+        return R.success(categoryList);
+    }
+
 
 
 }
