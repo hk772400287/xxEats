@@ -22,7 +22,7 @@ public class LoginCheckFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         String requestURI = request.getRequestURI();
-        String[] urlPatterns = {"/employee/login", "/employee/logout", "/backend/**", "/front/**"};
+        String[] urlPatterns = {"/employee/login", "/employee/logout", "/backend/**", "/front/**", "/common/**", "/user/sendMsg", "/user/login"};
         boolean isAllowPassing = isAllowPassing(requestURI, urlPatterns);
         if (isAllowPassing) {
             log.info("Allow pass: {}", requestURI);
@@ -32,6 +32,12 @@ public class LoginCheckFilter implements Filter {
         if (request.getSession().getAttribute("employee") != null) {
             log.info("Already logged in, userID is {}", request.getSession().getAttribute("employee"));
             BaseContext.setCurrentId((Long) request.getSession().getAttribute("employee"));
+            filterChain.doFilter(request, response);
+            return;
+        }
+        if (request.getSession().getAttribute("user") != null) {
+            log.info("Already logged in, userID is {}", request.getSession().getAttribute("user"));
+            BaseContext.setCurrentId((Long) request.getSession().getAttribute("user"));
             filterChain.doFilter(request, response);
             return;
         }
