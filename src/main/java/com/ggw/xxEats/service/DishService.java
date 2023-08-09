@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.ggw.xxEats.dto.DishDto;
 import com.ggw.xxEats.entity.Dish;
 
+import java.util.List;
+
 public interface DishService extends IService<Dish> {
 
     void saveWithFlavor(DishDto dishDto);
@@ -17,4 +19,6 @@ public interface DishService extends IService<Dish> {
     void stopSelling(Long dishId);
 
     void startSelling(Long dishId);
+
+    List<DishDto> getListWithFlavor(Dish dish);
 }

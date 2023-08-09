@@ -99,12 +99,8 @@ public class DishController {
     }
 
     @GetMapping("/list")
-    public R<List<Dish>> list(Dish dish) {
-        LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(dish.getCategoryId() != null, Dish::getCategoryId, dish.getCategoryId());
-        lambdaQueryWrapper.eq(Dish::getStatus, 1);
-        lambdaQueryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
-        List<Dish> dishList = dishService.list(lambdaQueryWrapper);
-        return R.success(dishList);
+    public R<List<DishDto>> list(Dish dish) {
+        List<DishDto> dishDtoList = dishService.getListWithFlavor(dish);
+        return R.success(dishDtoList);
     }
 }

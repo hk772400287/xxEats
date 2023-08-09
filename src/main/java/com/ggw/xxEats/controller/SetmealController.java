@@ -96,4 +96,13 @@ public class SetmealController {
         setmealService.updateWithDish(setmealDto);
         return R.success("Setmeal info updated successfully");
     }
+
+    @GetMapping("/list")
+    public R<List<Setmeal>> list(Setmeal setmeal) {
+        LambdaQueryWrapper<Setmeal> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(setmeal.getCategoryId() != null, Setmeal::getCategoryId, setmeal.getCategoryId()).
+                eq(Setmeal::getStatus, setmeal.getStatus()).orderByDesc(Setmeal::getUpdateTime);
+        List<Setmeal> setmealList = setmealService.list(wrapper);
+        return R.success(setmealList);
+    }
 }
