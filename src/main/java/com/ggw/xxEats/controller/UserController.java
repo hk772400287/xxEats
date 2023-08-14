@@ -60,4 +60,10 @@ public class UserController {
         }
         return R.error("login failed");
     }
+
+    @PostMapping("/loginout")
+    public R<String> logout(HttpSession session) {
+        session.removeAttribute("user");
+        return R.success("logout successfully");
+    }
 }
