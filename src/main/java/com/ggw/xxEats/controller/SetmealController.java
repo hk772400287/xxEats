@@ -14,6 +14,9 @@ import com.ggw.xxEats.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +37,7 @@ public class SetmealController {
     @Autowired
     private CategoryService categoryService;
 
+    @CacheEvict(value = "setMealCache", allEntries = true)
     @PostMapping
     public R<String> save(@RequestBody SetmealDto setmealDto) {
         setmealService.saveWithDish(setmealDto);
@@ -63,6 +67,7 @@ public class SetmealController {
         return R.success(pageInfoDto);
     }
 
+    @CacheEvict(value = "setMealCache", allEntries = true)
     @DeleteMapping
     public R<String> delete(@RequestParam List<Long> ids) {
         setmealService.deleteWithDish(ids);
@@ -91,12 +96,14 @@ public class SetmealController {
         return R.success(setmealDto);
     }
 
+    @CacheEvict(value = "setMealCache", allEntries = true)
     @PutMapping
     public R<String> update(@RequestBody SetmealDto setmealDto) {
         setmealService.updateWithDish(setmealDto);
         return R.success("Setmeal info updated successfully");
     }
 
+    @Cacheable(value = "setMealCache", key = "#setmeal.categoryId + '_' + #setmeal.status")
     @GetMapping("/list")
     public R<List<Setmeal>> list(Setmeal setmeal) {
         LambdaQueryWrapper<Setmeal> wrapper = new LambdaQueryWrapper<>();
