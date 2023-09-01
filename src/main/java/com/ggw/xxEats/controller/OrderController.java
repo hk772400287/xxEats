@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,12 +67,17 @@ public class OrderController {
 
     @GetMapping("/page")
     public R<Page> userPage(int page, int pageSize, Long number, String beginTime, String endTime) {
-        log.info("Begin time : {}", beginTime);
         Page<Orders> orderPage = new Page<>(page, pageSize);
         LambdaQueryWrapper<Orders> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.orderByDesc(Orders::getOrderTime).like(number != null, Orders::getId, number);
         lambdaQueryWrapper.between(beginTime != null && endTime != null, Orders::getOrderTime, beginTime, endTime);
         orderService.page(orderPage, lambdaQueryWrapper);
         return R.success(orderPage);
+    }
+
+    @PutMapping
+    public R<String> editOrderStatus(@RequestBody Orders order) {
+        orderService.editStatus(order);
+        return R.success("Edited status successfully");
     }
 }

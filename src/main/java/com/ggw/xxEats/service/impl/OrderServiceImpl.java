@@ -1,6 +1,8 @@
 package com.ggw.xxEats.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ggw.xxEats.common.BaseContext;
@@ -84,4 +86,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         orderDetailService.saveBatch(orderDetailList);
         shoppingCartService.remove(wrapper);
     }
+
+    @Override
+    public void editStatus(Orders order) {
+        LambdaUpdateWrapper<Orders> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.set(Orders::getStatus, order.getStatus()).eq(Orders::getId, order.getId());
+        this.update(wrapper);
+    }
+
+
 }

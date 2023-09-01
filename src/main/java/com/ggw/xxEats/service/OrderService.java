@@ -5,4 +5,6 @@ import com.ggw.xxEats.entity.Orders;
 
 public interface OrderService extends IService<Orders> {
     void submit(Orders orders);
+
+    void editStatus(Orders order);
 }
